@@ -85,6 +85,7 @@ class CocoConfig(Config):
 
     # Number of classes (including background)
     NUM_CLASSES = 1 + 80  # COCO has 80 classes
+    GPU_COUNT = 1
 
 
 ############################################################
@@ -135,6 +136,7 @@ class CocoDataset(utils.Dataset):
 
         # Add images
         for i in image_ids:
+            #print(i, coco.loadAnns(coco.getAnnIds(imgIds = [i], catIds = class_ids, iscrowd = None)))
             self.add_image(
                 "coco", image_id=i,
                 path=os.path.join(image_dir, coco.imgs[i]['file_name']),
@@ -252,7 +254,7 @@ class CocoDataset(utils.Dataset):
                 # Is it a crowd? If so, use a negative class ID.
                 if annotation['iscrowd']:
                     # Use negative class ID for crowds
-                    class_id *= -1
+                    #class_id *= -1
                     # For crowd masks, annToMask() sometimes returns a mask
                     # smaller than the given dimensions. If so, resize it.
                     if m.shape[0] != image_info["height"] or m.shape[1] != image_info["width"]:

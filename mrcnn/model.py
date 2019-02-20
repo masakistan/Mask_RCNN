@@ -1829,6 +1829,7 @@ class MaskRCNN():
         config: A Sub-class of the Config class
         model_dir: Directory to save training logs and trained weights
         """
+        print('initialize model')
         assert mode in ['training', 'inference']
         self.mode = mode
         self.config = config
@@ -1843,6 +1844,7 @@ class MaskRCNN():
                 outputs of the model differ accordingly.
         """
         assert mode in ['training', 'inference']
+        print('building model')
 
         # Image size must be dividable by 2 multiple times
         h, w = config.IMAGE_SHAPE[:2]
@@ -1934,6 +1936,7 @@ class MaskRCNN():
             anchors = KL.Lambda(lambda x: tf.Variable(anchors), name="anchors")(input_image)
         else:
             anchors = input_anchors
+
 
         # RPN Model
         rpn = build_rpn_model(config.RPN_ANCHOR_STRIDE,
@@ -2351,7 +2354,9 @@ class MaskRCNN():
         log("\nStarting at epoch {}. LR={}\n".format(self.epoch, learning_rate))
         log("Checkpoint Path: {}".format(self.checkpoint_path))
         self.set_trainable(layers)
+        log("Setting trainable\n")
         self.compile(learning_rate, self.config.LEARNING_MOMENTUM)
+        log("Done compiling\n")
 
         # Work-around for Windows: Keras fails on Windows when using
         # multiprocessing workers. See discussion here:
@@ -2360,6 +2365,7 @@ class MaskRCNN():
             workers = 0
         else:
             workers = multiprocessing.cpu_count()
+        log("Workers: {}\n".format(workers))
 
         self.keras_model.fit_generator(
             train_generator,
